@@ -1,0 +1,24 @@
+{% extends "students/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome!</h2>
+<div class="cards">
+    <div class="card">
+        <h3>Users</h3>
+        <p>View all students and their courses</p>
+        <a href="{% url 'users' %}"><button>View Users</button></a>
+    </div>
+    <div class="card">
+        <h3>Courses</h3>
+        <p>Manage courses for enrollment</p>
+        <a href="{% url 'courses' %}"><button>View Courses</button></a>
+    </div>
+    <div class="card">
+        <h3>Records</h3>
+        <p>See overall student records</p>
+        <a href="{% url 'records' %}"><button>View Records</button></a>
+    </div>
+</div>
+{% endblock %}
