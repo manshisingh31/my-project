@@ -1,0 +1,58 @@
+{% extends 'students/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: var(--shadow-float);">
+    <h2 style="margin-bottom: 20px; color: var(--text-main); font-weight: 800;">Add New Student</h2>
+    
+    <form method="POST" novalidate> {% csrf_token %}
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: 600; color: #64748b; margin-bottom: 8px;">Full Name:</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div style="color: #dc2626; font-size: 0.85rem; margin-top: 8px; font-weight: 700; background: #fee2e2; padding: 5px 10px; border-radius: 6px; border-left: 4px solid #ef4444;">
+                    ⚠️ {{ form.name.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: 600; color: #64748b; margin-bottom: 8px;">Email Address:</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div style="color: #dc2626; font-size: 0.85rem; margin-top: 8px; font-weight: 700; background: #fee2e2; padding: 5px 10px; border-radius: 6px; border-left: 4px solid #ef4444;">
+                    ⚠️ {{ form.email.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: 600; color: #64748b; margin-bottom: 8px;">Phone Number:</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+                <div style="color: #dc2626; font-size: 0.85rem; margin-top: 8px; font-weight: 700; background: #fee2e2; padding: 5px 10px; border-radius: 6px; border-left: 4px solid #ef4444;">
+                    ⚠️ {{ form.phone.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" style="background: var(--accent-pop); color: white; padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); transition: all 0.3s ease;">
+            Save Student
+        </button>
+    </form>
+</div>
+
+<style>
+    .form-control, input[type="text"], input[type="email"], input[type="tel"] {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+    }
+    /* This makes the box turn red when there is an error */
+    
+</style>
+{% endblock %}

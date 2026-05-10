@@ -1,0 +1,36 @@
+{% extends 'students/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: var(--shadow-float);">
+    <h2 style="margin-bottom: 20px; color: var(--text-main); font-weight: 800;">Add New Course</h2>
+    
+    <form method="POST">
+        {% csrf_token %} 
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+            {{ form.as_p }} 
+        </div>
+
+        <button type="submit" style="background: var(--accent-pop); color: white; padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);">
+            Save Course
+        </button>
+    </form>
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+    form p {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}

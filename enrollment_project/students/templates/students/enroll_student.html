@@ -1,0 +1,99 @@
+{% extends 'students/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: var(--shadow-float);">
+    <h2 style="margin-bottom: 20px; color: var(--text-main); font-weight: 800;">
+        {% if edit_mode %}Update Enrollment Status{% else %}Enroll Student in Course{% endif %}
+    </h2>
+
+    {% if request.GET.student and not edit_mode %}
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <p style="margin: 0; color: #166534; font-weight: 700;">Filtering courses...</p>
+            <p style="margin: 0; font-size: 0.8rem; color: #16a34a;">Only showing available courses for this student.</p>
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div style="background: #fee2e2; color: #dc2626; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-weight: 700;">
+                {% for error in form.non_field_errors %} {{ error }} {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label>Student:</label>
+            {% if edit_mode %}
+                <div style="padding: 12px 15px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; color: #0f172a; font-weight: 700;">
+                    {{ record.student.name }}
+                </div>
+                <input type="hidden" name="student" value="{{ record.student.id }}">
+            {% else %}
+                <select name="student" class="form-control" onchange="window.location.href='?student=' + this.value">
+                    <option value="">---------</option>
+                    {% for student in form.fields.student.queryset %}
+                        <option value="{{ student.id }}" {% if student.id|stringformat:"s" == request.GET.student %}selected{% endif %}>
+                            {{ student.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label>Course:</label>
+            {% if edit_mode %}
+                <div style="padding: 12px 15px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; color: #64748b; font-weight: 600;">
+                    {{ record.course.name }}
+                </div>
+                <input type="hidden" name="course" value="{{ record.course.id }}">
+            {% else %}
+                {{ form.course }}
+                {% if request.GET.student %}
+                    <small style="color: #94a3b8; display: block; margin-top: 5px;">*Showing courses not yet taken.</small>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 30px;">
+            <label>Status:</label>
+            <div class="status-wrapper">
+                {{ form.status }}
+            </div>
+        </div>
+
+        <button type="submit" style="width: 100%; padding: 15px; border-radius: 12px; background: var(--accent-pop); color: white; border: none; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); transition: transform 0.2s;">
+            {% if edit_mode %}Save Changes{% else %}Confirm Enrollment{% endif %}
+        </button>
+    </form>
+</div>
+
+<style>
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    label {
+        display: block;
+        font-weight: 600;
+        color: #64748b;
+    }
+    /* Styles for both manual selects and Django widgets */
+    .form-control, .status-wrapper select, select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        background-color: white;
+        color: #0f172a;
+        outline: none;
+        box-sizing: border-box;
+    }
+    .form-control:focus, select:focus {
+        border-color: var(--accent-pop);
+    }
+</style>
+{% endblock %}
