@@ -22,9 +22,25 @@ Including another URLconf
 #     path('', include('students.urls')), 
 # ]
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from students import views 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('students.urls')),  # root URL goes to dashboard
+    path('', views.dashboard, name='dashboard'), 
+    path('users/', views.users, name='students_list'), 
+    path('users/add/', views.add_student, name='add_student'),
+    
+    # Add this brand new line!
+    path('courses/', views.courses_list, name='courses_list'),
+    path('courses/add/', views.add_course, name='add_course'),
+    path('enroll/', views.enroll_student, name='enroll_student'),
+    path('records/', views.records_list, name='records_list'),
+    path('users/edit/<int:pk>/', views.edit_student, name='edit_student'),
+    path('users/edit/<int:pk>/', views.edit_student, name='edit_student'),
+    path('users/delete/<int:pk>/', views.delete_student, name='delete_student'), # <--- THIS LINE
+    path('courses/edit/<int:pk>/', views.edit_course, name='edit_course'),
+    path('courses/delete/<int:pk>/', views.delete_course, name='delete_course'),
+    path('records/edit/<int:pk>/', views.edit_record, name='edit_record'),
+    path('records/closed/', views.closed_records, name='closed_records'),
 ]

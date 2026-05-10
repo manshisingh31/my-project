@@ -1,24 +1,101 @@
-{% extends "students/base.html" %}
-
-{% block title %}Dashboard{% endblock %}
+{% extends 'students/base.html' %}
 
 {% block content %}
-<h2>Welcome!</h2>
-<div class="cards">
-    <div class="card">
-        <h3>Users</h3>
-        <p>View all students and their courses</p>
-        <a href="{% url 'users' %}"><button>View Users</button></a>
-    </div>
-    <div class="card">
-        <h3>Courses</h3>
-        <p>Manage courses for enrollment</p>
-        <a href="{% url 'courses' %}"><button>View Courses</button></a>
-    </div>
-    <div class="card">
-        <h3>Records</h3>
-        <p>See overall student records</p>
-        <a href="{% url 'records' %}"><button>View Records</button></a>
+    <header class="content-header" style="margin-bottom: 40px;">
+        <h1 style="font-size: 2.2rem; margin-bottom: 8px; font-weight: 800; color: #0f172a;">Welcome back!</h1>
+        <p style="color: #64748b; font-size: 1.1rem;">Here is what is happening with your enrollments today.</p>
+    </header>
+
+    <div class="metrics-grid">
+        <div class="metric-card" onclick="window.location.href='{% url 'students_list' %}'" style="cursor: pointer;">
+            <h3>Total Users</h3>
+            <span class="number">{{ total_users }}</span>
+        </div>
+
+        <div class="metric-card" onclick="window.location.href='{% url 'courses_list' %}'" style="cursor: pointer;">
+            <h3>Active Courses</h3>
+            <span class="number">{{ active_courses }}</span>
+        </div>
+        
+        <div class="metric-card" onclick="window.location.href='{% url 'records_list' %}'" style="cursor: pointer;">
+    <h3>Pending Enrollments</h3>
+    
+    <span class="number" style="{% if pending_count > 0 %}color: #f59e0b;{% endif %}">
+        {{ pending_count|default:"0" }}
+    </span>
+    
+    <div style="margin-top: 10px;">
+        {% if pending_count > 0 %}
+            <span class="trend negative">Action needed</span>
+        {% else %}
+            <span class="trend positive">All caught up! ✅</span>
+        {% endif %}
     </div>
 </div>
+        
+    </div> <div class="table-container" style="margin-top: 30px; background: white; padding: 25px; border-radius: 20px; box-shadow: var(--shadow-float);">
+        <h2 style="margin-bottom: 20px; font-weight: 700; color: #0f172a;">Recent Enrollments</h2>
+        <table class="activity-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid #f1f5f9;">
+                    <th style="padding: 12px; color: #64748b;">Student Name</th>
+                    <th style="padding: 12px; color: #64748b;">Course</th>
+                    <th style="padding: 12px; color: #64748b;">Date</th>
+                    <th style="padding: 12px; color: #64748b;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in recent_records %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 12px; font-weight: 600;">{{ record.student.name }}</td>
+                    <td style="padding: 12px;">{{ record.course.name }}</td>
+                    <td style="padding: 12px; color: #64748b;">{{ record.enrollment_date }}</td>
+                    <td style="padding: 12px;">
+                        {% if record.status == 'Enrolled' %}
+                            <span class="badge" style="background: #dcfce7; color: #16a34a; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;">{{ record.status }}</span>
+                        {% elif record.status == 'Pending' %}
+                            <span class="badge" style="background: #fef9c3; color: #a16207; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;">{{ record.status }}</span>
+                        {% else %}
+                            <span class="badge" style="background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;">{{ record.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: #64748b;">
+                        No active enrollments. <a href="{% url 'enroll_student' %}" style="color: var(--accent-pop);">Enroll someone now</a>.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" style="margin-top: 40px; background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0;">
+        <h2 style="color: #64748b; font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 700;">
+            <span style="font-size: 1.5rem;">📁</span> System Archive
+        </h2>
+        <table class="activity-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid #e2e8f0; color: #94a3b8; font-size: 0.85rem;">
+                    <th style="padding: 12px;">STUDENT</th>
+                    <th style="padding: 12px;">COURSE</th>
+                    <th style="padding: 12px;">DATE COMPLETED</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in archived_records %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 12px; font-weight: 600; color: #475569;">{{ record.student.name }}</td>
+                    <td style="padding: 12px; color: #64748b;">{{ record.course.name }}</td>
+                    <td style="padding: 12px; color: #94a3b8; font-style: italic;">{{ record.enrollment_date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 20px; color: #cbd5e1;">Archive is currently empty.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

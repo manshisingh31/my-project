@@ -1,20 +1,57 @@
-{% extends "students/base.html" %}
-{% block title %}Courses{% endblock %}
+{% extends 'students/base.html' %}
 
 {% block content %}
-<h2>Courses</h2>
+    <!-- Header Section -->
+    <header class="content-header" style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 style="font-size: 2.2rem; margin-bottom: 8px; font-weight: 800; color: #0f172a;">Courses List</h1>
+            <p style="color: #64748b; font-size: 1.1rem;">Manage and view all available courses.</p>
+        </div>
+        <!-- Fixed the double << and added the Add Course link -->
+        <a href="{% url 'add_course' %}" style="text-decoration: none; background: var(--accent-pop); color: white; padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); transition: all 0.3s ease; display: inline-block;">
+            + Add Course
+        </a>
+    </header>
 
-<form method="POST" style="margin-bottom:20px;">
-    {% csrf_token %}
-    <input type="text" name="title" placeholder="Add new course" required>
-    <button type="submit">Add Course</button>
-</form>
-
-<ul>
-    {% for course in courses %}
-        <li>{{ course.title }}</li>
-    {% empty %}
-        <li>No courses available</li>
-    {% endfor %}
-</ul>
+    <!-- Styled Table Container -->
+    <div class="table-container" style="background: white; padding: 25px; border-radius: 20px; box-shadow: var(--shadow-float);">
+        <table class="activity-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid #f1f5f9;">
+                    <th style="padding: 12px; color: #64748b;">Course Name</th>
+                    <th style="padding: 12px; color: #64748b;">Description</th>
+                    <th style="padding: 12px; color: #64748b;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 15px; font-weight: 700; color: #0f172a;">{{ course.name }}</td>
+                    <td style="padding: 15px; color: #64748b;">{{ course.description }}</td>
+                    <td style="padding: 15px;">
+                        <!-- Link to the edit_course view we created -->
+                        <a href="{% url 'edit_course' course.id %}" style="color: var(--accent-pop); text-decoration: none; font-weight: 700; font-size: 0.85rem; margin-right: 15px;">
+                            Edit
+                        </a>
+                        
+                        <!-- Added a placeholder or real Delete link -->
+                        <a href="{% url 'delete_course' course.id %}" 
+   style="color: #ef4444; text-decoration: none; font-weight: 700; font-size: 0.85rem;" 
+   onclick="return confirm('Are you sure you want to delete this course? This will remove it from all records.')">
+    Delete
+</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 60px 20px; background: #fafaf9; border-radius: 12px;">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">📚</div>
+                        <h3 style="color: #0f172a; margin-bottom: 8px; font-weight: 700;">No courses available</h3>
+                        <p style="color: #64748b; font-size: 0.95rem;">Once you add courses to the database, they will appear here.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

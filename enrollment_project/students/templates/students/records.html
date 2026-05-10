@@ -1,0 +1,87 @@
+{% extends 'students/base.html' %}
+
+{% block content %}
+    <header class="content-header" style="margin-bottom: 40px;">
+        <h1 style="font-size: 2.2rem; margin-bottom: 8px; font-weight: 800; color: #0f172a;">Enrollment Records</h1>
+        <p style="color: #64748b; font-size: 1.1rem;">View and manage the complete history of active student enrollments.</p>
+    </header>
+
+    <div class="table-container" style="background: white; padding: 30px; border-radius: 20px; box-shadow: var(--shadow-float);">
+        
+        <form method="GET" style="margin-bottom: 25px; display: flex; gap: 10px; max-width: 600px;">
+            <input type="text" name="q" value="{{ query|default:'' }}" 
+                   placeholder="Search by student name, email, or course..." 
+                   style="flex: 1; padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; outline: none; transition: border-color 0.2s;"
+                   onfocus="this.style.borderColor='var(--accent-pop)'"
+                   onblur="this.style.borderColor='#e2e8f0'">
+            
+            <button type="submit" style="padding: 12px 24px; background: var(--accent-pop); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3); transition: transform 0.2s;">
+                Search
+            </button>
+            
+            {% if query %}
+                <a href="?" style="padding: 12px 24px; background: #f1f5f9; color: #475569; text-decoration: none; font-weight: 600; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; align-items: center; transition: background 0.2s;">
+                    Clear
+                </a>
+            {% endif %}
+        </form>
+
+        <table class="activity-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid #f1f5f9;">
+                    <th style="padding: 12px; color: var(--text-muted); font-size: 0.9rem;">STUDENT</th>
+                    <th style="padding: 12px; color: var(--text-muted); font-size: 0.9rem;">COURSE</th>
+                    <th style="padding: 12px; color: var(--text-muted); font-size: 0.9rem;">DATE JOINED</th>
+                    <th style="padding: 12px; color: var(--text-muted); font-size: 0.9rem;">STATUS</th>
+                    <th style="padding: 12px; color: var(--text-muted); font-size: 0.9rem;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 15px; font-weight: 700; color: #0f172a;">{{ record.student.name }}</td>
+                        <td style="padding: 15px;">{{ record.course.name }}</td>
+                        <td style="padding: 15px; color: #64748b;">{{ record.enrollment_date }}</td>
+                        <td style="padding: 15px;">
+                            <span class="badge" 
+                                  style="padding: 5px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; 
+                                  {% if record.status == 'Pending' %} background: #fef9c3; color: #a16207; 
+                                  {% elif record.status == 'Completed' %} background: #f1f5f9; color: #64748b;
+                                  {% else %} background: #dcfce7; color: #16a34a; {% endif %}">
+                                {{ record.status|upper }}
+                            </span>
+                        </td>
+                        <td style="padding: 15px;">
+                            {% if record.status != 'Completed' %}
+                                <a href="{% url 'edit_record' record.id %}" 
+                                   style="color: var(--accent-pop); text-decoration: none; font-weight: 700; font-size: 0.85rem; border: 1px solid var(--accent-pop); padding: 5px 10px; border-radius: 8px; transition: 0.3s; display: inline-block;">
+                                   Update Status
+                                </a>
+                            {% else %}
+                                <span style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                                    🔒 Archived
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 60px; color: #64748b;">
+                            <div style="font-size: 3rem; margin-bottom: 10px;">{% if query %}🔍{% else %}📋{% endif %}</div>
+                            <p style="font-weight: 600; margin-bottom: 10px;">
+                                {% if query %}
+                                    No records found matching "{{ query }}".
+                                {% else %}
+                                    No active enrollment records found yet.
+                                {% endif %}
+                            </p>
+                            {% if not query %}
+                                <a href="{% url 'enroll_student' %}" style="color: var(--accent-pop); font-weight: 700; text-decoration: none;">Enroll someone now &rarr;</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
